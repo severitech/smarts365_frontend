@@ -10,7 +10,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
-import { Search } from "lucide-react";
+import { Search, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -79,7 +79,11 @@ export default function BarraDeNavegacion() {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input type="search" placeholder="Search..." className="pl-8" />
           </form>
-          <Button>Sign In</Button>
+
+          <Button>
+            <ShoppingCart />
+          </Button>
+          <Button><Link href={'/auth/login'}>Sign In</Link></Button>
         </div>
       </div>
     </nav>
@@ -97,7 +101,7 @@ const ListItem = React.forwardRef<
           ref={ref}
           className={cn(
             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className,
+            className
           )}
           {...props}
         >
