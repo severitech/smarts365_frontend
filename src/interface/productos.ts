@@ -52,12 +52,14 @@ export interface RespuestaProducto {
 /**
  * Filtros para productos
  */
-export interface FiltrosProductos {
-  buscar?: string
-  subcategoria?: number
-  estado?: string
-  precio_min?: number
-  precio_max?: number
-  ordenar_por?: string
-  orden?: 'asc' | 'desc'
+export interface FiltrosProductosInterface {
+  buscar?: string;
+  categoria?: number;
+  subcategoria?: number;
+  estado?: string;
+  precio_min?: number;
+  precio_max?: number;
+  ordenar_por?: string;
+  orden?: 'asc' | 'desc';
+  marca?: string;
 }

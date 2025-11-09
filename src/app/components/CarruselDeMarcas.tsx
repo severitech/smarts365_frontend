@@ -4,14 +4,44 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 const marcas = [
-  { nombre: "Nike", logo: "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg" },
-  { nombre: "Adidas", logo: "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg" },
-  { nombre: "Puma", logo: "https://upload.wikimedia.org/wikipedia/commons/f/fd/Puma_logo.svg" },
-  { nombre: "Reebok", logo: "https://upload.wikimedia.org/wikipedia/commons/5/53/Reebok_2019_logo.svg" },
-  { nombre: "Under Armour", logo: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Under_armour_logo.svg" },
-  { nombre: "New Balance", logo: "https://upload.wikimedia.org/wikipedia/commons/e/ea/New_Balance_logo.svg" },
-  { nombre: "Converse", logo: "https://upload.wikimedia.org/wikipedia/commons/5/56/Converse_logo.svg" },
-  { nombre: "Vans", logo: "https://upload.wikimedia.org/wikipedia/commons/5/56/Vans_logo.svg" },
+  {
+    nombre: "Adidas",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg",
+  },
+  {
+    nombre: "Reebok",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/5/53/Reebok_2019_logo.svg",
+  },
+
+  {
+    nombre: "LG",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/2/20/LG_symbol.svg",
+  },
+
+  {
+    nombre: "PlayStation",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Playstation_logo_colour.svg",
+  },
+  {
+    nombre: "Xbox",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Xbox_one_logo.svg",
+  },
+  {
+    nombre: "Nintendo",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/0/0d/Nintendo.svg",
+  },
+  {
+    nombre: "Samsung",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/6/61/Samsung_old_logo_before_year_2015.svg",
+  },
+  {
+    nombre: "Philips",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/5/52/Philips_logo_new.svg",
+  },
+  {
+    nombre: "Electrolux",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/8/81/Electrolux_logo.svg",
+  },
 ];
 
 export default function MarcasCarousel() {
@@ -30,7 +60,10 @@ export default function MarcasCarousel() {
         }}
       >
         {[...marcas, ...marcas].map((marca, index) => (
-          <div key={index} className="flex items-center justify-center min-w-[150px]">
+          <div
+            key={index}
+            className="flex items-center justify-center min-w-[150px]"
+          >
             <Image
               src={marca.logo}
               alt={marca.nombre}
