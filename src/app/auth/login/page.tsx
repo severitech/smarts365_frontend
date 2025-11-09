@@ -2,11 +2,11 @@
 "use client"
 
 import { useState } from "react"
-import { LoginForm } from "@/components/login-form"
 import { Button } from "@/components/ui/button"
 import { RegisterForm } from "./components/Formulario_Registrar"
 import { ArrowLeftIcon } from "lucide-react"
 import Link from "next/dist/client/link"
+import { LoginForm } from "./components/Formulario_Inicio_Sesion"
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true)

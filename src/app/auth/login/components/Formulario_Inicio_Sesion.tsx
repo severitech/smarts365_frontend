@@ -6,17 +6,17 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useAuth } from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
-import { Login } from "@/interface/auth"
+import { DatosLogin } from "@/interface/auth"
+import { useAutenticacion } from "@/hooks/useAuth"
 
 export function LoginForm() {
-  const [formData, setFormData] = useState<Login>({
-    email: "admin@example.com", // Datos de prueba
+  const [formData, setFormData] = useState<DatosLogin>({
+    email: "admin@example.com", 
     password: "password123"
   })
   const [error, setError] = useState("")
-  const { login, isLoading } = useAuth()
+  const { iniciarSesion, cargando } = useAutenticacion()
   const router = useRouter()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,13 +30,13 @@ export function LoginForm() {
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault()
     setError("")
-    const result = await login(formData)
+    const result = await iniciarSesion(formData)
     
-    if (result.success) {
+    if (result.exito) {
       router.push("/dashboard")
     } else {
-      console.log('❌ Error en login:', result.message)
-      setError(result.message)
+      console.log('❌ Error en login:', result.mensaje)
+      setError(result.mensaje)
     }
   }
 
@@ -65,7 +65,7 @@ export function LoginForm() {
               value={formData.email}
               onChange={handleChange}
               required
-              disabled={isLoading}
+              disabled={cargando}
             />
           </div>
           
@@ -78,12 +78,12 @@ export function LoginForm() {
               value={formData.password}
               onChange={handleChange}
               required
-              disabled={isLoading}
+              disabled={cargando}
             />
           </div>
           
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
+          <Button type="submit" className="w-full" disabled={cargando}>
+            {cargando ? "Iniciando sesión..." : "Iniciar Sesión"}
           </Button>
         </form>
 

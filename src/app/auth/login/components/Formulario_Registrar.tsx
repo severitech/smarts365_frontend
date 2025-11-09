@@ -1,4 +1,4 @@
-// app/auth/login/components/Formulario_Registrar.tsx
+
 "use client"
 
 import { useState } from "react"
@@ -24,7 +24,7 @@ export function RegisterForm() {
   }
 
   return (
-    <Card className="h-full"> {/* Añadido h-full */}
+    <Card className="h-full"> 
       <CardHeader className="text-center">
         <CardTitle className="text-xl">Crear Cuenta</CardTitle>
         <CardDescription>

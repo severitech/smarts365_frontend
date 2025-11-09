@@ -1,4 +1,4 @@
-interface Categoria {
+export interface Categoria {
   id: number;
   descripcion: string;
 }

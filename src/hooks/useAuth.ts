@@ -1,90 +1,113 @@
 // hooks/useAuth.ts
 'use client'
 
-import { authService } from '@/app/auth/login/service/auth.service'
-import { AuthResponse, Datos_Registro, Login, Usuario } from '@/interface/auth'
+import { servicioAutenticacion } from '@/api/autenticacion.service'
+import { RespuestaAutenticacion, DatosRegistro, DatosLogin, Usuario } from '@/interface/auth'
 import { useState, useEffect, useCallback } from 'react'
 
-export function useAuth() {
-  const [user, setUser] = useState<Usuario | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+/**
+ * Hook personalizado para manejar la autenticación en componentes React
+ * Proporciona estado y funciones para login, registro y logout
+ */
+export function useAutenticacion() {
+  // Estado del usuario actual
+  const [usuario, setUsuario] = useState<Usuario | null>(null)
+  
+  // Estado de carga (útil para mostrar spinners)
+  const [cargando, setCargando] = useState(true)
+  
+  // Estado de autenticación
+  const [autenticado, setAutenticado] = useState(false)
 
-  // Cargar usuario al inicializar
+  /**
+   * Efecto que se ejecuta al montar el componente
+   * Carga el usuario desde localStorage si existe
+   */
   useEffect(() => {
-    const loadUser = async () => {
+    const cargarUsuario = async () => {
       try {
-        const currentUser = await authService.getCurrentUser()
-        setUser(currentUser)
-        setIsAuthenticated(!!currentUser)
+        const usuarioActual = await servicioAutenticacion.obtenerUsuarioActual()
+        setUsuario(usuarioActual)
+        setAutenticado(!!usuarioActual)
       } catch (error) {
-        console.error('Error loading user:', error)
+        console.error('Error cargando usuario:', error)
       } finally {
-        setIsLoading(false)
+        setCargando(false)
       }
     }
 
-    loadUser()
+    cargarUsuario()
   }, [])
 
-  const login = useCallback(async (loginData: Login): Promise<AuthResponse> => {
-    setIsLoading(true)
+  /**
+   * Función para iniciar sesión
+   */
+  const iniciarSesion = useCallback(async (datosLogin: DatosLogin): Promise<RespuestaAutenticacion> => {
+    setCargando(true)
     
     try {
-      const result = await authService.login(loginData)
+      const resultado = await servicioAutenticacion.iniciarSesion(datosLogin)
       
-      if (result.success && result.user) {
-        setUser(result.user)
-        setIsAuthenticated(true)
+      // Si el login fue exitoso, actualizar estado
+      if (resultado.exito && resultado.usuario) {
+        setUsuario(resultado.usuario)
+        setAutenticado(true)
       }
       
-      return result
+      return resultado
     } catch (error) {
       return {
-        success: false,
-        message: 'Error inesperado en el login'
+        exito: false,
+        mensaje: 'Error inesperado en el inicio de sesión'
       }
     } finally {
-      setIsLoading(false)
+      setCargando(false)
     }
   }, [])
 
-  const register = useCallback(async (registerData: Datos_Registro): Promise<AuthResponse> => {
-    setIsLoading(true)
+  /**
+   * Función para registrar nuevo usuario
+   */
+  const registrarUsuario = useCallback(async (datosRegistro: DatosRegistro): Promise<RespuestaAutenticacion> => {
+    setCargando(true)
     
     try {
-      const result = await authService.register(registerData)
-      return result
+      const resultado = await servicioAutenticacion.registrarUsuario(datosRegistro)
+      return resultado
     } catch (error) {
       return {
-        success: false,
-        message: 'Error inesperado en el registro'
+        exito: false,
+        mensaje: 'Error inesperado en el registro'
       }
     } finally {
-      setIsLoading(false)
+      setCargando(false)
     }
   }, [])
 
-  const logout = useCallback(async (): Promise<void> => {
-    setIsLoading(true)
+  /**
+   * Función para cerrar sesión
+   */
+  const cerrarSesion = useCallback(async (): Promise<void> => {
+    setCargando(true)
     
     try {
-      await authService.logout()
-      setUser(null)
-      setIsAuthenticated(false)
+      await servicioAutenticacion.cerrarSesion()
+      setUsuario(null)
+      setAutenticado(false)
     } catch (error) {
-      console.error('Error en logout:', error)
+      console.error('Error cerrando sesión:', error)
     } finally {
-      setIsLoading(false)
+      setCargando(false)
     }
   }, [])
 
+  // Retornamos el estado y las funciones
   return {
-    user,
-    isLoading,
-    isAuthenticated,
-    login,
-    register,
-    logout
+    usuario,
+    cargando,
+    autenticado,
+    iniciarSesion,
+    registrarUsuario,
+    cerrarSesion
   }
 }

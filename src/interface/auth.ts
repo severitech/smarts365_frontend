@@ -1,5 +1,8 @@
+// interface/auth.ts
 
-// lib/types/auth.types.ts
+/**
+ * Interfaz para el perfil de usuario
+ */
 export interface Perfil {
   id: number
   user: string
@@ -7,35 +10,52 @@ export interface Perfil {
   telefono: string | null
 }
 
+/**
+ * Interfaz principal del usuario
+ */
 export interface Usuario {
   id: number
   email: string
+  first_name: string
+  last_name: string
   perfil: Perfil
 }
 
-export interface Login {
+/**
+ * Datos necesarios para iniciar sesión
+ */
+export interface DatosLogin {
   email: string
   password: string
 }
 
-export interface Datos_Registro {
-  firstName: string
-  lastName: string
+/**
+ * Datos necesarios para registrar un nuevo usuario
+ */
+export interface DatosRegistro {
+  nombre: string
+  apellido: string
   email: string
   password: string
-  confirmPassword: string
+  confirmarPassword: string
 }
 
-export interface AuthResponse {
-  success: boolean
-  message: string
+/**
+ * Respuesta de las operaciones de autenticación
+ */
+export interface RespuestaAutenticacion {
+  exito: boolean
+  mensaje: string
   token?: string
-  user?: Usuario
-  errors?: Record<string, string[]>
+  usuario?: Usuario
+  errores?: Record<string, string[]>
 }
 
-export interface AuthState {
-  user: Usuario | null
-  isLoading: boolean
-  isAuthenticated: boolean
+/**
+ * Estado de autenticación en la aplicación
+ */
+export interface EstadoAutenticacion {
+  usuario: Usuario | null
+  cargando: boolean
+  autenticado: boolean
 }
