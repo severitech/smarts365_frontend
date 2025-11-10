@@ -62,4 +62,6 @@ export interface FiltrosProductosInterface {
   ordenar_por?: string;
   orden?: 'asc' | 'desc';
   marca?: string;
+  limite: number;
+  pagina: number;
 }

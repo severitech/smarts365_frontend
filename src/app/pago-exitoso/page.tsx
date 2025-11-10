@@ -3,7 +3,6 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { servicioPagos } from '@/api/carrito.service';
 
@@ -102,11 +101,11 @@ export default function PagoExitoso() {
               Volver al Carrito
             </Button>
             
-            <Link href="/" className="block w-full">
+            <a href={"/"} className="block w-full">
               <Button variant="outline" className="w-full">
                 Continuar Comprando
               </Button>
-            </Link>
+            </a>
           </div>
         </div>
       </div>
@@ -233,25 +232,25 @@ export default function PagoExitoso() {
 
         {/* Botones de acción */}
         <div className="space-y-3">
-          <Link href="/mis-pedidos" className="block w-full">
+          <a href={"/mis-pedidos"} className="block w-full">
             <Button className="w-full bg-green-500 hover:bg-green-600 text-white">
               Ver Mis Pedidos
             </Button>
-          </Link>
+          </a>
           
-          <Link href="/" className="block w-full">
+          <a href={"/"} className="block w-full">
             <Button variant="outline" className="w-full">
               Seguir Comprando
             </Button>
-          </Link>
+          </a>
           
           <div className="text-center">
-            <Link 
-              href="/contacto" 
+            <a 
+              href={"/contacto"} 
               className="text-sm text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
             >
               ¿Tienes preguntas? Contáctanos
-            </Link>
+            </a>
           </div>
         </div>
       </div>

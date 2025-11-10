@@ -1,4 +1,4 @@
-// api/pagos.service.ts - VERSIÓN TEMPORAL
+// api/pagos.service.ts - VERSIÓN ACTUALIZADA
 import { DatosPago, RespuestaCheckout, RespuestaVerificacionPago } from "@/interface/carrito"
 import { utilidadesAutenticacion } from "@/lib/autenticacion"
 
@@ -94,10 +94,81 @@ class ServicioPagos {
         throw new Error(errorData.error || `Error ${respuesta.status}: ${respuesta.statusText}`)
       }
 
-      return await respuesta.json()
+      const resultado = await respuesta.json()
+      
+      // ✅ NUEVO: LIMPIAR CARRITO SI EL PAGO FUE EXITOSO
+      if (resultado.pago_exitoso) {
+        this.limpiarCarritoLocalStorage()
+        console.log('✅ Pago exitoso - Carrito limpiado automáticamente')
+      }
+
+      return resultado
     } catch (error) {
       console.error('❌ Error verificando pago:', error)
       throw error
+    }
+  }
+
+  /**
+   * NUEVO: Limpiar carrito del localStorage
+   */
+  private limpiarCarritoLocalStorage(): void {
+    try {
+      if (typeof window === 'undefined') return
+      
+      // Guardar info de debug antes de limpiar
+      const carritoAntes = localStorage.getItem('carrito')
+      console.log('🛒 Carrito antes de limpiar:', carritoAntes)
+      
+      // Eliminar el carrito del localStorage
+      localStorage.removeItem('carrito')
+      localStorage.removeItem('carrito_timestamp')
+      sessionStorage.removeItem('carrito')
+      
+      // Verificar que se limpió
+      const carritoDespues = localStorage.getItem('carrito')
+      console.log('🛒 Carrito después de limpiar:', carritoDespues)
+      console.log('✅ Carrito limpiado exitosamente del localStorage')
+      
+    } catch (error) {
+      console.warn('⚠️ No se pudo limpiar el carrito del localStorage:', error)
+    }
+  }
+
+  /**
+   * NUEVO: Obtener carrito actual del localStorage (para debug)
+   */
+  obtenerCarritoLocal(): any[] {
+    try {
+      if (typeof window === 'undefined') return []
+      
+      const carrito = localStorage.getItem('carrito')
+      return carrito ? JSON.parse(carrito) : []
+    } catch {
+      return []
+    }
+  }
+
+  /**
+   * NUEVO: Método público para limpiar carrito manualmente
+   */
+  limpiarCarrito(): void {
+    this.limpiarCarritoLocalStorage()
+  }
+
+  /**
+   * NUEVO: Verificar estado del carrito (para debug)
+   */
+  verificarEstadoCarrito(): { existe: boolean; items: any[]; cantidad: number } {
+    try {
+      const carrito = this.obtenerCarritoLocal()
+      return {
+        existe: carrito.length > 0,
+        items: carrito,
+        cantidad: carrito.length
+      }
+    } catch {
+      return { existe: false, items: [], cantidad: 0 }
     }
   }
 }
