@@ -1,9 +1,11 @@
-// app/carrito/page.tsx
 "use client";
 
 import { usarCarrito } from '@/context/CarritoContexto';
 import Link from 'next/link';
-import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { useAutenticacion } from '@/hooks/useAuth'; // Importa tu hook de autenticación
+import { servicioPagos } from '@/api/carrito.service';
 
 export default function Page() {
   const { 
@@ -14,6 +16,59 @@ export default function Page() {
     calcularTotal,
     contadorCarrito 
   } = usarCarrito();
+
+  // ✅ Obtener el usuario autenticado
+  const { usuario, autenticado } = useAutenticacion();
+  const [procesandoPago, setProcesandoPago] = useState(false);
+
+  const ProcederPago = async () => {
+    if (carrito.length === 0) {
+      alert('El carrito está vacío');
+      return;
+    }
+
+    // ✅ Verificar que el usuario esté autenticado
+    if (!autenticado || !usuario) {
+      alert('Por favor inicia sesión para proceder al pago');
+      // Opcional: redirigir al login
+      // window.location.href = '/auth/login';
+      return;
+    }
+
+    setProcesandoPago(true);
+
+    try {
+      // 1. Preparar los datos del pago
+      const datosPago = {
+        descripcion: `Compra de ${contadorCarrito} artículo${contadorCarrito > 1 ? 's' : ''}`,
+        items: carrito.map(item => ({
+          producto_id: item.id,
+          nombre: item.descripcion,
+          precio: item.precio,
+          cantidad: item.cantidad
+        }))
+      };
+
+      console.log('Usuario ID:', usuario.id); // Debug
+      console.log('Datos de pago:', datosPago); // Debug
+
+      // 2. ✅ Pasar el ID del usuario al servicio
+      const resultado = await servicioPagos.crearCheckoutSession(
+        datosPago, 
+        usuario.id // ✅ Pasar el ID del usuario aquí
+      );
+
+      // 3. Redirigir a Stripe Checkout
+      window.location.href = resultado.checkout_url;
+
+    } catch (error) {
+      console.error('Error al procesar pago:', error);
+      alert('Error al procesar el pago: ' + (error instanceof Error ? error.message : 'Error desconocido'));
+    } finally {
+      setProcesandoPago(false);
+    }
+  };
+
 
   if (carrito.length === 0) {
     return (
@@ -226,9 +281,9 @@ export default function Page() {
 
               {/* Botones de acción */}
               <div className="space-y-3">
-                <button className="w-full bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white py-3 rounded-lg transition-all duration-300 transform hover:scale-105 font-semibold">
+                <Button onClick={ProcederPago} className="w-full bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white py-3 rounded-lg transition-all duration-300 transform hover:scale-105 font-semibold">
                   Proceder al Pago
-                </button>
+                </Button>
                 
                 <button className="w-full border border-gray-300 dark:border-zinc-600 text-gray-700 dark:text-gray-300 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors duration-200">
                   Guardar para después

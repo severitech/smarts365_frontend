@@ -1,5 +1,5 @@
 // api/productos.service.ts
-import { Producto, DatosCrearProducto, DatosActualizarProducto, RespuestaProductos, RespuestaProducto, FiltrosProductos } from '@/interface/productos'
+import { Producto, DatosCrearProducto, DatosActualizarProducto, RespuestaProductos, RespuestaProducto, FiltrosProductosInterface } from '@/interface/productos'
 import { utilidadesAutenticacion } from '@/lib/autenticacion'
 
 /**
@@ -11,7 +11,7 @@ class ServicioProductos {
   /**
    * Obtener todos los productos con filtros opcionales
    */
-  async obtenerProductos(filtros: FiltrosProductos = {}): Promise<RespuestaProductos> {
+  async obtenerProductos(filtros: FiltrosProductosInterface = {}): Promise<RespuestaProductos> {
     try {
       // Construir query string con filtros
       const parametros = new URLSearchParams()
@@ -26,14 +26,13 @@ class ServicioProductos {
 
       const url = `${this.urlBase}/productos/${parametros.toString() ? `?${parametros.toString()}` : ''}`
       
-      console.log('🔄 Solicitando productos desde:', url)
 
       const respuesta = await fetch(url, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          ...utilidadesAutenticacion.obtenerHeadersAutenticacion()
-        },
+        // headers: {
+        //   'Content-Type': 'application/json',
+        //   ...utilidadesAutenticacion.obtenerHeadersAutenticacion()
+        // },
       })
 
       if (!respuesta.ok) {
@@ -64,10 +63,10 @@ class ServicioProductos {
     try {
       const respuesta = await fetch(`${this.urlBase}/productos/${id}/`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          ...utilidadesAutenticacion.obtenerHeadersAutenticacion()
-        },
+        // headers: {
+        //   'Content-Type': 'application/json',
+        //   ...utilidadesAutenticacion.obtenerHeadersAutenticacion()
+        // },
       })
 
       if (!respuesta.ok) {
@@ -148,10 +147,10 @@ class ServicioProductos {
 
       const respuesta = await fetch(`${this.urlBase}/productos/${id}/`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          ...utilidadesAutenticacion.obtenerHeadersAutenticacion()
-        },
+        // headers: {
+        //   'Content-Type': 'application/json',
+        //   ...utilidadesAutenticacion.obtenerHeadersAutenticacion()
+        // },
         body: JSON.stringify(datosActualizacion)
       })
 
@@ -184,10 +183,10 @@ class ServicioProductos {
     try {
       const respuesta = await fetch(`${this.urlBase}/productos/${id}/`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          ...utilidadesAutenticacion.obtenerHeadersAutenticacion()
-        },
+        // headers: {
+        //   'Content-Type': 'application/json',
+        //   ...utilidadesAutenticacion.obtenerHeadersAutenticacion()
+        // },
         body: JSON.stringify({ estado: 'eliminado' })
       })
 
@@ -215,10 +214,10 @@ class ServicioProductos {
     try {
       const respuesta = await fetch(`${this.urlBase}/productos/?search=${encodeURIComponent(termino)}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          ...utilidadesAutenticacion.obtenerHeadersAutenticacion()
-        },
+        // headers: {
+        //   'Content-Type': 'application/json',
+        //   ...utilidadesAutenticacion.obtenerHeadersAutenticacion()
+        // },
       })
 
       if (!respuesta.ok) {
