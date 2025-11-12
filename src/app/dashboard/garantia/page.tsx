@@ -1,20 +1,20 @@
-// app/productos/page.tsx
+// app/garantias/page.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Producto, FiltrosProductosInterface } from '@/interface/productos';
-import { servicioProductos } from '@/api/productos.service';
-import FiltrosProductos from './components/FiltroProductos';
-import ListaProductos from './components/ListaProductos';
-import ModalProducto from './components/ModalProductos';
+import { Garantia, FiltrosGarantiasInterface } from '@/interface/garantia';
+import { servicioGarantias } from '@/api/garantia.service';
+import ListaGarantias from './components/ListaGarantias';
+import ModalGarantia from './components/ModalGarantia';
+import FiltrosGarantias from './components/Filtros';
 
-export default function ProductosPage() {
-  const [productos, setProductos] = useState<Producto[]>([]);
+export default function GarantiasPage() {
+  const [garantias, setGarantias] = useState<Garantia[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
   const [mostrarModal, setMostrarModal] = useState(false);
-  const [productoEditando, setProductoEditando] = useState<Producto | null>(null);
-  const [filtros, setFiltros] = useState<FiltrosProductosInterface>({});
+  const [garantiaEditando, setGarantiaEditando] = useState<Garantia | null>(null);
+  const [filtros, setFiltros] = useState<FiltrosGarantiasInterface>({});
   const [paginacion, setPaginacion] = useState({
     total: 0,
     paginaActual: 1,
@@ -22,28 +22,28 @@ export default function ProductosPage() {
     limite: 10
   });
 
-  // Cargar productos
-  const cargarProductos = async () => {
+  // Cargar garantías
+  const cargarGarantias = async () => {
     try {
       setCargando(true);
       setError('');
       
-      const respuesta = await servicioProductos.obtenerProductos({
+      const respuesta = await servicioGarantias.obtenerGarantias({
         ...filtros,
         pagina: paginacion.paginaActual,
         limite: paginacion.limite
       });
 
       if (respuesta.exito) {
-        setProductos(respuesta.datos);
-        if (respuesta.mensaje) {
-          setPaginacion(respuesta.mensaje);
+        setGarantias(respuesta.datos);
+        if (respuesta.paginacion) {
+          setPaginacion(respuesta.paginacion);
         }
       } else {
-        setError(respuesta.mensaje || 'Error al cargar productos');
+        setError(respuesta.mensaje || 'Error al cargar garantías');
       }
     } catch (err) {
-      setError('Error al cargar productos');
+      setError('Error al cargar garantías');
       console.error('Error:', err);
     } finally {
       setCargando(false);
@@ -51,84 +51,66 @@ export default function ProductosPage() {
   };
 
   useEffect(() => {
-    cargarProductos();
+    cargarGarantias();
   }, [filtros, paginacion.paginaActual]);
 
   // Manejar creación/edición
-  const manejarGuardarProducto = async (datosProducto: any) => {
+  const manejarGuardarGarantia = async (datosGarantia: any) => {
     try {
       let respuesta;
       
-      if (productoEditando) {
-        respuesta = await servicioProductos.actualizarProducto(productoEditando.id, datosProducto);
+      if (garantiaEditando) {
+        respuesta = await servicioGarantias.actualizarGarantia(garantiaEditando.id, datosGarantia);
       } else {
-        respuesta = await servicioProductos.crearProducto(datosProducto);
+        respuesta = await servicioGarantias.crearGarantia(datosGarantia);
       }
 
       if (respuesta.exito) {
-        await cargarProductos();
+        await cargarGarantias();
         cerrarModal();
       } else {
-        setError(respuesta.mensaje || 'Error al guardar producto');
+        setError(respuesta.mensaje || 'Error al guardar garantía');
       }
     } catch (err) {
-      setError('Error al guardar producto');
+      setError('Error al guardar garantía');
       console.error('Error:', err);
     }
   };
 
   // Manejar eliminación
-  const manejarEliminarProducto = async (id: number) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+  const manejarEliminarGarantia = async (id: number) => {
+    if (!confirm('¿Estás seguro de que quieres eliminar esta garantía?')) {
       return;
     }
 
     try {
-      const respuesta = await servicioProductos.eliminarProducto(id, false);
+      const respuesta = await servicioGarantias.eliminarGarantia(id);
       
       if (respuesta.exito) {
-        await cargarProductos();
+        await cargarGarantias();
       } else {
-        setError(respuesta.mensaje || 'Error al eliminar producto');
+        setError(respuesta.mensaje || 'Error al eliminar garantía');
       }
     } catch (err) {
-      setError('Error al eliminar producto');
-      console.error('Error:', err);
-    }
-  };
-
-  // Manejar activación/desactivación
-  const manejarCambiarEstado = async (id: number, estado: 'Activo' | 'Inactivo') => {
-    try {
-      const respuesta = estado === 'Activo' 
-        ? await servicioProductos.activarProducto(id)
-        : await servicioProductos.eliminarProducto(id, false);
-
-      if (respuesta.exito) {
-        await cargarProductos();
-      } else {
-        setError(respuesta.mensaje || 'Error al cambiar estado');
-      }
-    } catch (err) {
-      setError('Error al cambiar estado');
+      setError('Error al eliminar garantía');
       console.error('Error:', err);
     }
   };
 
   // Modal functions
   const abrirModalCrear = () => {
-    setProductoEditando(null);
+    setGarantiaEditando(null);
     setMostrarModal(true);
   };
 
-  const abrirModalEditar = (producto: Producto) => {
-    setProductoEditando(producto);
+  const abrirModalEditar = (garantia: Garantia) => {
+    setGarantiaEditando(garantia);
     setMostrarModal(true);
   };
 
   const cerrarModal = () => {
     setMostrarModal(false);
-    setProductoEditando(null);
+    setGarantiaEditando(null);
   };
 
   // Paginación
@@ -136,15 +118,15 @@ export default function ProductosPage() {
     setPaginacion(prev => ({ ...prev, paginaActual: pagina }));
   };
 
-  if (cargando && productos.length === 0) {
+  if (cargando && garantias.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-2"></div>
           <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-8"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-gray-200 dark:bg-gray-700 rounded-lg h-80"></div>
+          <div className="space-y-4">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="bg-gray-200 dark:bg-gray-700 rounded-lg h-20"></div>
             ))}
           </div>
         </div>
@@ -158,23 +140,23 @@ export default function ProductosPage() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Gestión de Productos
+            Gestión de Garantías
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
-            Administra los productos de tu tienda
+            Administra las garantías de los productos
           </p>
         </div>
         <button
           onClick={abrirModalCrear}
-          className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors mt-4 md:mt-0"
+          className="bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white px-6 py-3 rounded-lg flex items-center space-x-2 transition-colors mt-4 md:mt-0"
         >
           <span>+</span>
-          <span>Nuevo Producto</span>
+          <span>Nueva Garantía</span>
         </button>
       </div>
 
       {/* Filtros */}
-      <FiltrosProductos
+      <FiltrosGarantias
         filtros={filtros}
         onFiltrosChange={setFiltros}
         onLimpiarFiltros={() => setFiltros({})}
@@ -201,23 +183,22 @@ export default function ProductosPage() {
         </div>
       )}
 
-      {/* Lista de Productos */}
-      <ListaProductos
-        productos={productos}
+      {/* Lista de Garantías */}
+      <ListaGarantias
+        garantias={garantias}
         cargando={cargando}
         onEditar={abrirModalEditar}
-        onEliminar={manejarEliminarProducto}
-        onCambiarEstado={manejarCambiarEstado}
+        onEliminar={manejarEliminarGarantia}
         paginacion={paginacion}
         onCambiarPagina={cambiarPagina}
       />
 
-      {/* Modal con shadcn */}
-      <ModalProducto
+      {/* Modal */}
+      <ModalGarantia
         open={mostrarModal}
         onOpenChange={setMostrarModal}
-        producto={productoEditando}
-        onGuardar={manejarGuardarProducto}
+        garantia={garantiaEditando}
+        onGuardar={manejarGuardarGarantia}
       />
     </div>
   );

@@ -48,13 +48,13 @@ const data = {
       icon: IconListDetails,
     },
     {
-      title: "Analytics",
-      url: "#",
+      title: "Garantia",
+      url: "/dashboard/garantia",
       icon: IconChartBar,
     },
     {
-      title: "Projects",
-      url: "#",
+      title: "Promoción",
+      url: "/dashboard/promocion",
       icon: IconFolder,
     },
     {

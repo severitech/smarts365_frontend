@@ -146,16 +146,17 @@ class ServicioProductos {
    */
   async crearProducto(datosProducto: DatosCrearProducto): Promise<RespuestaProducto> {
     try {
-      // Para imágenes, necesitaríamos usar FormData si hay archivos
-      // Pero como imagenes es JSONField, podemos enviar como JSON
+      // Preparar el cuerpo EXACTAMENTE como lo espera el backend
       const cuerpo = {
         descripcion: datosProducto.descripcion,
         precio: parseFloat(datosProducto.precio.toString()),
         stock: parseInt(datosProducto.stock.toString()),
         estado: datosProducto.estado,
-        subcategoria: datosProducto.subcategoria,
-        imagenes: datosProducto.imagenes || [] // Array de URLs de imágenes
+        subcategoria_id: datosProducto.subcategoria_id,
+        imagenes: datosProducto.imagenes || []
       }
+
+      console.log('📤 Enviando datos al backend:', cuerpo);
 
       const respuesta = await fetch(`${this.urlBase}/productos/`, {
         method: 'POST',
@@ -165,7 +166,25 @@ class ServicioProductos {
 
       if (!respuesta.ok) {
         const errorData = await respuesta.json().catch(() => ({}))
-        throw new Error(errorData.detail || errorData.message || `Error ${respuesta.status}: ${respuesta.statusText}`)
+        console.error('❌ Error del backend:', errorData);
+        
+        // Mostrar errores específicos del backend si existen
+        let mensajeError = `Error ${respuesta.status}: ${respuesta.statusText}`;
+        if (errorData.detail) {
+          mensajeError = errorData.detail;
+        } else if (errorData.message) {
+          mensajeError = errorData.message;
+        } else if (typeof errorData === 'object') {
+          // Mostrar errores de validación de campos
+          const erroresCampo = Object.entries(errorData)
+            .map(([campo, errores]) => `${campo}: ${Array.isArray(errores) ? errores.join(', ') : errores}`)
+            .join('; ');
+          if (erroresCampo) {
+            mensajeError = erroresCampo;
+          }
+        }
+        
+        throw new Error(mensajeError);
       }
 
       const datos = await respuesta.json()
@@ -190,6 +209,8 @@ class ServicioProductos {
    */
   async actualizarProducto(id: number, datosActualizacion: Partial<DatosActualizarProducto>): Promise<RespuestaProducto> {
     try {
+      console.log('📤 Actualizando producto con datos:', datosActualizacion);
+
       const respuesta = await fetch(`${this.urlBase}/productos/${id}/`, {
         method: 'PATCH',
         headers: this.obtenerHeaders(),
@@ -198,7 +219,23 @@ class ServicioProductos {
 
       if (!respuesta.ok) {
         const errorData = await respuesta.json().catch(() => ({}))
-        throw new Error(errorData.detail || errorData.message || `Error ${respuesta.status}: ${respuesta.statusText}`)
+        console.error('❌ Error del backend:', errorData);
+        
+        let mensajeError = `Error ${respuesta.status}: ${respuesta.statusText}`;
+        if (errorData.detail) {
+          mensajeError = errorData.detail;
+        } else if (errorData.message) {
+          mensajeError = errorData.message;
+        } else if (typeof errorData === 'object') {
+          const erroresCampo = Object.entries(errorData)
+            .map(([campo, errores]) => `${campo}: ${Array.isArray(errores) ? errores.join(', ') : errores}`)
+            .join('; ');
+          if (erroresCampo) {
+            mensajeError = erroresCampo;
+          }
+        }
+        
+        throw new Error(mensajeError);
       }
 
       const datos = await respuesta.json()

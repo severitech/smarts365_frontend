@@ -191,16 +191,16 @@ export default function BarraDeNavegacion() {
                     )}
 
                     {esAdministrador && (
-                      <Link
+                      <a
                         href="/dashboard"
                         className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent rounded-md w-full text-left"
                       >
                         <Settings className="h-4 w-4" />
                         Panel Admin
-                      </Link>
+                      </a>
                     )}
 
-                    <button
+                    <button 
                       onClick={cerrarSesion}
                       className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent rounded-md w-full text-left text-red-600"
                     >

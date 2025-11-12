@@ -22,7 +22,7 @@ export interface DatosCrearProducto {
   precio: number
   stock: number
   estado: string
-  subcategoria: number
+  subcategoria_id: number
   imagenes?: File[]
 }
 
